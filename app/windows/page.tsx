@@ -39,7 +39,7 @@ export default function WindowsPage() {
         <Box bg="white" border="1px solid" borderColor="gray.200" borderRadius="8px" p={5}>
           <Heading size="md" mb={1}>窗口条款</Heading><Text color="gray.500" fontSize="sm" mb={4}>{selected?.id ?? '请选择窗口'}</Text>
           {selected && <Grid templateColumns="1fr 1fr" gap={4}>
-            <Box gridColumn="span 2"><Text fontSize="sm" mb={1}>渠道</Text><Input value={selected.channel} onChange={(event) => updateWindow(selected.id, { channel: event.target.value })} /></Box>
+            <Box gridColumn="span 2"><Text fontSize="sm" mb={1}>渠道</Text><Select value={selected.channel} onChange={(event) => updateWindow(selected.id, { channel: event.target.value })}>{['星海影院', '云帆视频', '南华卫视', '海岛航空', '环球新媒体'].map((channel) => <option key={channel}>{channel}</option>)}</Select></Box>
             <Box><Text fontSize="sm" mb={1}>开始日期</Text><Input type="date" value={selected.start} onChange={(event) => updateWindow(selected.id, { start: event.target.value })} /></Box>
             <Box><Text fontSize="sm" mb={1}>结束日期</Text><Input type="date" value={selected.end} onChange={(event) => updateWindow(selected.id, { end: event.target.value })} /></Box>
             <Box><Text fontSize="sm" mb={1}>优先顺序</Text><Input type="number" value={selected.priority} onChange={(event) => updateWindow(selected.id, { priority: Number(event.target.value) })} /></Box>
@@ -48,6 +48,7 @@ export default function WindowsPage() {
           </Grid>}
           {selected && conflicts.filter((issue) => issue.windowIds.includes(selected.id)).map((issue) => <Box key={issue.id} mt={4} p={3} bg={issue.severity === '高' ? 'red.50' : 'orange.50'} borderLeft="3px solid" borderLeftColor={issue.severity === '高' ? 'red.500' : 'orange.400'}><Text fontWeight="700" fontSize="sm">{issue.type}</Text><Text fontSize="sm" color="gray.600" mt={1}>{issue.explanation}</Text></Box>)}
           <Button w="100%" mt={5} colorScheme="blue" onClick={validateAndSave}>保存并重新校验</Button>
+          <Text color="gray.400" fontSize="xs" mt={2}>窗口条款变化会使同档期临时占档立即作废重排，结果见「占档准入账 · 重排结果」。</Text>
         </Box>
       </Grid>
     </Box>

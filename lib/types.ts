@@ -33,3 +33,45 @@ export interface DraftVersion {
   summary: string
   changes: string[]
 }
+
+export type HoldStatus = '占位中' | '待重排' | '已作废' | '已确认' | '已拒绝'
+export type HoldSource = '临时占档' | '正式授权' | '历史补录'
+
+export interface HoldEvent {
+  time: string
+  actor: string
+  action: string
+  detail: string
+}
+
+export interface HoldRequest {
+  id: string
+  requestNo: string
+  workId: string
+  work: string
+  channel: string
+  territory: Territory
+  start: string
+  end: string
+  arrivedAt: string
+  seq: number
+  status: HoldStatus
+  source: HoldSource
+  owner: string
+  releaseDays: number
+  blockedBy: string[]
+  voidReason?: string
+  confirmedAt?: string
+  note?: string
+  events: HoldEvent[]
+}
+
+export interface RequeueRecord {
+  id: string
+  requestNo: string
+  reason: string
+  voidedId: string
+  newId?: string
+  outcome: HoldStatus
+  time: string
+}
