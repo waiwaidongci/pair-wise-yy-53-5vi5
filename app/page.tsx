@@ -3,16 +3,20 @@
 import { Box, Flex, Grid, Heading, Text, Badge, Button, Table, Thead, Tbody, Tr, Th, Td, Progress } from '@chakra-ui/react'
 import Link from 'next/link'
 import { useRightsStore, useConflicts } from '@/store/rights'
+import { holdStats } from '@/lib/holds'
 import { trpc } from '@/trpc/client'
 
 export default function Dashboard() {
   const windows = useRightsStore((state) => state.windows)
   const comments = useRightsStore((state) => state.comments)
+  const holds = useRightsStore((state) => state.holds)
   const version = useRightsStore((state) => state.version)
   const conflicts = useConflicts()
   const catalog = trpc.catalog.useQuery()
+  const hStats = holdStats(holds)
   const cards = [
     { label: '授权窗口', value: windows.length, note: `${catalog.data?.works.length ?? 2} 部作品` },
+    { label: '临时占档', value: hStats.active, note: `${hStats.confirmed} 项正式授权` },
     { label: '责任地区', value: new Set(windows.map((item) => item.territory)).size, note: '联动地区矩阵' },
     { label: '高优先级冲突', value: conflicts.filter((item) => item.severity === '高').length, note: '阻止审批通过' },
     { label: '当前草案', value: `v${version}`, note: '自动保留本地版本' },
@@ -23,7 +27,7 @@ export default function Dashboard() {
         <Box><Text color="brand.600" fontSize="xs" fontWeight="bold">版权窗口与独占规则</Text><Heading fontSize={{ base: '2xl', md: '3xl' }} my={1}>授权窗口审阅总览</Heading><Text color="gray.600">联动核验时间、地区、渠道、权利类型与独占范围，修改在审批前保留完整版本。</Text></Box>
         <Flex gap={2}><Button as={Link} href="/reviews" variant="outline">比较版本</Button><Button as={Link} href="/windows" colorScheme="blue">调整窗口</Button></Flex>
       </Flex>
-      <Grid templateColumns={{ base: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' }} gap={4} mb={5}>
+      <Grid templateColumns={{ base: 'repeat(2,1fr)', lg: 'repeat(5,1fr)' }} gap={4} mb={5}>
         {cards.map((card) => <Box key={card.label} bg="white" border="1px solid" borderColor="gray.200" borderLeft="4px solid" borderLeftColor="brand.500" borderRadius="8px" p={4}><Text color="gray.500" fontSize="sm">{card.label}</Text><Heading size="lg" my={1}>{card.value}</Heading><Text color="gray.500" fontSize="xs">{card.note}</Text></Box>)}
       </Grid>
       <Grid templateColumns={{ base: '1fr', xl: '1.55fr .8fr' }} gap={4} mb={4}>
